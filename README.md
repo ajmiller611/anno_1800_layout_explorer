@@ -13,8 +13,7 @@ This project demonstrates skills in web scraping, UI development, and interactiv
 - **Interactive UI:** Displays all layouts in a scrollable sidebar for quick navigation.
 - **Detail View:** Selecting a layout opens a detailed panel showing:
   - Production per minute  
-  - Space requirements  
-  - Workforce needs  
+  - Space requirements
   - Category and building components  
 - **Clean User Experience:** Designed to be simple, responsive, and easy to browse.
 
