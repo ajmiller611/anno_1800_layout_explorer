@@ -1,8 +1,6 @@
 import customtkinter as ctk
 from settings import *
-from data_retriever import Data
-from main_frames import InitializingFrame, LayoutFinderFrame
-from threading import Thread
+from main_frames import LayoutFinderFrame
 
 # Import Windows dynamic link library and C data type converter libraries.
 try:
@@ -23,39 +21,7 @@ class App(ctk.CTk):
         # Setup and extract data by web scrapping.
         self.initializing_text_var = ctk.StringVar(value='Setting up the driver...')
         self.progress_var = ctk.DoubleVar(value=0)
-        self.data = Data()
-
-        # Create a new thread for data extracting process.
-        self.data_thread = Thread(target=self.data.driver_setup, args=(self.progress_var,))
-        self.data_thread.start()
-        self.monitor(self.data_thread, 'driver')
-
-        # Widgets
-        self.initializing_frame = InitializingFrame(self, self.initializing_text_var, self.progress_var)
-
-    def monitor(self, thread, classification):
-        # Monitor the data thread for when the task has been completed.
-        if thread.is_alive():
-            self.after(50, lambda: self.monitor(thread, classification))
-
-        elif classification == 'driver':
-            self.progress_var.set(0)
-            self.initializing_text_var.set('Extracting data elements...')
-            self.data_thread = Thread(target=self.data.extract_data_elements, args=(self.progress_var,))
-            self.data_thread.start()
-            self.monitor(self.data_thread, 'elements')
-
-        elif classification == 'elements':
-            self.progress_var.set(0)
-            self.initializing_text_var.set('Extracting layout images...')
-            self.data_thread = Thread(target=self.data.extract_images, args=(self.progress_var,))
-            self.data_thread.start()
-            self.monitor(self.data_thread, 'images')
-
-        elif classification == 'images':
-            self.data.create_data_frame()
-            self.initializing_frame.pack_forget()
-            LayoutFinderFrame(self)
+        LayoutFinderFrame(self)
 
     def get_screen_offset(self):
         # On startup, find offset to center the window on the screen.

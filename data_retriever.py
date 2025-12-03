@@ -327,7 +327,7 @@ def convert_data_entry_to_dict(data):
         # Since the string in the data file already had the syntax of a dictionary, search for substrings that are
         # surrounded by single quotes. The key-value pairs can then be extracted and put into a dictionary.
         while data_string:
-            # Using a regular expression, match any character and all characters between single quotes.
+            # Using a regular expression, match all characters between single quotes.
             match = re.search("\'.*?\'", data_string)
 
             # Remove the single quotes from the matched string.

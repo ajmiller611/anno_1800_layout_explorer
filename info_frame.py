@@ -86,9 +86,15 @@ class ConstructionCostPanel(ctk.CTkFrame):
             text_color=PANEL_TEXT_COLOR,
             font=ctk.CTkFont(family=FONT_FAMILY, size=INFO_PANEL_FONT_SIZE)).grid(row=0, column=0, sticky='w', padx=5)
 
+        # Initialize data frame variable for use in the create data frame method.
+        self.data_display_frame = None
         self.data_display_frame = self.create_data_display_frame(cost)
 
     def create_data_display_frame(self, cost):
+        # Unmap the previous data frame.
+        if self.data_display_frame:
+            self.data_display_frame.grid_forget()
+
         frame = ctk.CTkFrame(self, fg_color=PANEL_BG_COLOR, corner_radius=0)
         frame.grid(row=0, column=1, sticky='nsew')
 
@@ -189,9 +195,15 @@ class ProductionPanel(ctk.CTkFrame):
             text_color=PANEL_TEXT_COLOR,
             font=ctk.CTkFont(family=FONT_FAMILY, size=INFO_PANEL_FONT_SIZE)).grid(row=0, column=0, sticky='w', padx=5)
 
+        # Initialize data frame variable for use in the create data frame method.
+        self.data_display_frame = None
         self.data_display_frame = self.create_data_display_frame(production)
 
     def create_data_display_frame(self, production):
+        # Unmap the previous data frame.
+        if self.data_display_frame:
+            self.data_display_frame.grid_forget()
+
         frame = ctk.CTkFrame(self, fg_color=PANEL_BG_COLOR, corner_radius=0)
         frame.grid(row=0, column=1, sticky='nsew')
 
@@ -268,107 +280,3 @@ class LogoPanel(Canvas):
         resized_image = self.image.resize((self.image_width, self.image_height))
         self.image_tk = ImageTk.PhotoImage(resized_image)
         self.create_image(self.canvas_width / 2, self.canvas_height / 2, image=self.image_tk)
-
-
-class BottomSliderPanel(ctk.CTkFrame):
-    def __init__(self, parent, update_button):
-        super().__init__(master=parent, fg_color=SLIDER_PANEL_BG_COLOR)
-
-        self.start_pos = 0.73
-        self.end_pos = 1.03
-        self.height = abs(self.start_pos - self.end_pos)
-
-        self.pos = self.start_pos
-        self.in_start_pos = ctk.BooleanVar(value=True)
-        self.in_start_pos.trace('w', update_button)
-
-        self.place(relx=0.26, rely=self.start_pos, relwidth=0.48, relheight=self.height)
-
-        # Layout
-        self.rowconfigure((0, 1), weight=5, uniform='a')
-        self.rowconfigure(2, weight=1, uniform='a')
-        self.rowconfigure((3, 4), weight=4, uniform='a')
-        self.columnconfigure((0, 3, 6), weight=1, uniform='a')
-        self.columnconfigure((1, 2, 4, 5), weight=4, uniform='a')
-
-        # Data
-        self.width_entry_var = ctk.StringVar()
-        self.height_entry_var = ctk.StringVar()
-
-        # Widgets
-        ctk.CTkLabel(
-            master=self,
-            text='Enter The Max Dimension Parameters',
-            text_color=PANEL_TEXT_COLOR,
-            font=ctk.CTkFont(family=FONT_FAMILY, size=36)).grid(row=0, column=0, columnspan=7, sticky='ns')
-
-        ctk.CTkLabel(
-            master=self,
-            text='Width:',
-            text_color=PANEL_TEXT_COLOR,
-            font=ctk.CTkFont(family=FONT_FAMILY, size=TITLE_FONT_SIZE)).grid(row=1, column=1, sticky='nsew')
-        ctk.CTkEntry(
-            master=self,
-            textvariable=self.width_entry_var,
-            text_color=PANEL_TEXT_COLOR,
-            font=ctk.CTkFont(family=FONT_FAMILY, size=INFO_FONT_SIZE),
-            fg_color=PANEL_BG_COLOR,
-            border_color=PANEL_TEXT_COLOR).grid(row=1, column=2, sticky='ew')
-
-        ctk.CTkLabel(
-            master=self,
-            text='Height:',
-            text_color=PANEL_TEXT_COLOR,
-            font=ctk.CTkFont(family=FONT_FAMILY, size=TITLE_FONT_SIZE)).grid(row=1, column=4, sticky='nsew')
-        ctk.CTkEntry(
-            master=self,
-            textvariable=self.height_entry_var,
-            text_color=PANEL_TEXT_COLOR,
-            font=ctk.CTkFont(family=FONT_FAMILY, size=INFO_FONT_SIZE),
-            fg_color=PANEL_BG_COLOR,
-            border_color=PANEL_TEXT_COLOR).grid(row=1, column=5, sticky='ew')
-
-        self.error_label = ctk.CTkLabel(
-            master=self,
-            text='',
-            text_color='red',
-            font=ctk.CTkFont(family=FONT_FAMILY, size=INFO_FONT_SIZE))
-        self.error_label.grid(row=2, column=2, columnspan=3, sticky='nsew')
-
-        ctk.CTkButton(
-            master=self,
-            command=self.layout_search,
-            text='Search',
-            text_color=PANEL_TEXT_COLOR,
-            font=ctk.CTkFont(family=FONT_FAMILY, size=INFO_FONT_SIZE),
-            fg_color=BUTTON_FG_COLOR,
-            hover_color=BUTTON_HOVER_COLOR).grid(row=3, column=2, columnspan=3, sticky='ew')
-
-    def animate(self):
-        if self.in_start_pos.get():
-            self.animate_down()
-        else:
-            self.animate_up()
-
-    def animate_up(self):
-        if self.pos > self.start_pos:
-            self.pos -= 0.008
-            self.place(relx=0.26, rely=self.pos, relwidth=0.48, relheight=self.height)
-            self.after(10, self.animate_up)
-        else:
-            self.in_start_pos.set(True)
-
-    def animate_down(self):
-        if self.pos < self.end_pos:
-            self.pos += 0.008
-            self.place(relx=0.26, rely=self.pos, relwidth=0.48, relheight=self.height)
-            self.after(10, self.animate_down)
-        else:
-            self.in_start_pos.set(False)
-
-    def layout_search(self):
-        if self.width_entry_var.get().isnumeric() and self.height_entry_var.get().isnumeric():
-            self.error_label.configure(text='')
-            print(f'searching for {self.width_entry_var.get()}x{self.height_entry_var.get()}')
-        else:
-            self.error_label.configure(text='Invalid Entry: Only numbers are valid')
